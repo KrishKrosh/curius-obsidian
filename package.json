@@ -1,5 +1,5 @@
 {
-	"name": "curius-plugin",
+	"name": "curius-obsidian",
 	"version": "1.0.1",
 	"description": "This is a plugin that syncs your Curius with Obsidian",
 	"main": "main.js",

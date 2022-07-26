@@ -1,10 +1,10 @@
 {
-	"id": "curius-plugin",
-	"name": "Curius Obsidian",
-	"version": "1.0.1",
+	"id": "curius-obsidian",
+	"name": "Curius to Obsidian",
+	"version": "1.0.0",
 	"minAppVersion": "0.12.0",
-	"description": "This is a Curius Obsidian for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
+	"description": "This is an Obsidian plugin to sync with Curius, the social bookmarking chrome extension.",
+	"author": "Krish Shah",
+	"authorUrl": "https://twitter.com/krishrshah",
 	"isDesktopOnly": false
 }
