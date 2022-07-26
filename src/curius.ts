@@ -45,7 +45,7 @@ export async function curiusToMarkdown(userId: number, app: App) {
 		const { curiusData, err } = await fetchCuriusData(userId, requestsMade);
 		if (err) {
 			new Notice(`Error: ${err}`);
-			return;
+			return true;
 		}
 		if (curiusData.length === 0) {
 			fullyUpdated = true;
@@ -53,8 +53,7 @@ export async function curiusToMarkdown(userId: number, app: App) {
 		for (const curiusObject of curiusData) {
 			const success = writeMarkdownFile(curiusObject, app);
 			if (!success) {
-				fullyUpdated = true;
-				break;
+				return false;
 			}
 		}
 		requestsMade++;

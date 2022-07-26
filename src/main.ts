@@ -7,7 +7,7 @@ import {
 	Setting,
 } from "obsidian";
 import { curiusToMarkdown } from "./curius";
-import { CuriusIcon, LoadingIcon } from "./icons";
+import { CuriusIcon } from "./icons";
 
 // Remember to rename these classes and interfaces!
 
@@ -21,13 +21,16 @@ const DEFAULT_SETTINGS: CuriusPluginSettings = {
 	SidebarIcon: true,
 };
 
+const MINUTE = 60 * 1000;
+
 export default class CuriusPlugin extends Plugin {
 	settings: CuriusPluginSettings;
 
 	async onload() {
+		const curiusStatusEl = this.addStatusBarItem();
+		curiusStatusEl.setText("Waiting for Curius...");
 		await this.loadSettings();
 		addIcon("curius", CuriusIcon);
-		addIcon("loading", LoadingIcon);
 
 		let currentIcon = "curius";
 
@@ -36,11 +39,13 @@ export default class CuriusPlugin extends Plugin {
 			? this.addRibbonIcon(currentIcon, "Sync With Curius", async () => {
 					// Called when the user clicks the icon.
 					new Notice("Syncing with Curius...");
-					currentIcon = "loading";
+					curiusStatusEl.setText("Syncing with Curius...");
 					await curiusToMarkdown(
 						parseInt(this.settings.CuriusId),
 						this.app
 					);
+
+					curiusStatusEl.setText("Curius Synced");
 					new Notice("Sync complete!");
 					currentIcon = "curius";
 					// eslint-disable-next-line no-mixed-spaces-and-tabs
@@ -57,10 +62,12 @@ export default class CuriusPlugin extends Plugin {
 			name: "Sync With Curius",
 			callback: async () => {
 				new Notice("Syncing with Curius...");
+				curiusStatusEl.setText("Syncing with Curius...");
 				await curiusToMarkdown(
 					parseInt(this.settings.CuriusId),
 					this.app
 				);
+				curiusStatusEl.setText("Curius Synced");
 				new Notice("Sync complete!");
 			},
 		});
@@ -69,6 +76,16 @@ export default class CuriusPlugin extends Plugin {
 		this.addSettingTab(new CuriusSettingTab(this.app, this));
 
 		// TODO: auto sync with curius using interval
+		this.registerInterval(
+			window.setInterval(async () => {
+				curiusStatusEl.setText("Syncing with Curius...");
+				const err = await curiusToMarkdown(
+					parseInt(this.settings.CuriusId),
+					this.app
+				);
+				curiusStatusEl.setText(err ? "Curius Error" : "Curius Synced");
+			}, 10 * MINUTE)
+		);
 	}
 
 	onunload() {}
