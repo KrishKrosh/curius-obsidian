@@ -32,22 +32,21 @@ export default class CuriusPlugin extends Plugin {
 		await this.loadSettings();
 		addIcon("curius", CuriusIcon);
 
-		let currentIcon = "curius";
+		const syncCurius = async () => {
+			// Called when the user clicks the icon.
+			new Notice("Syncing with Curius...");
+			curiusStatusEl.setText("Syncing with Curius...");
+			await curiusToMarkdown(parseInt(this.settings.CuriusId), this.app);
+
+			curiusStatusEl.setText("Curius Synced");
+			new Notice("Sync complete!");
+		};
+		await syncCurius();
 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.settings.SidebarIcon
-			? this.addRibbonIcon(currentIcon, "Sync With Curius", async () => {
-					// Called when the user clicks the icon.
-					new Notice("Syncing with Curius...");
-					curiusStatusEl.setText("Syncing with Curius...");
-					await curiusToMarkdown(
-						parseInt(this.settings.CuriusId),
-						this.app
-					);
-
-					curiusStatusEl.setText("Curius Synced");
-					new Notice("Sync complete!");
-					currentIcon = "curius";
+			? this.addRibbonIcon("curius", "Sync With Curius", async () => {
+					await syncCurius();
 					// eslint-disable-next-line no-mixed-spaces-and-tabs
 			  })
 			: null;
@@ -61,14 +60,7 @@ export default class CuriusPlugin extends Plugin {
 			id: "curius-sync",
 			name: "Sync With Curius",
 			callback: async () => {
-				new Notice("Syncing with Curius...");
-				curiusStatusEl.setText("Syncing with Curius...");
-				await curiusToMarkdown(
-					parseInt(this.settings.CuriusId),
-					this.app
-				);
-				curiusStatusEl.setText("Curius Synced");
-				new Notice("Sync complete!");
+				await syncCurius();
 			},
 		});
 
