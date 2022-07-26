@@ -16,7 +16,7 @@ https://user-images.githubusercontent.com/50386081/180921585-c3c44afe-d52e-40f7-
 Not yet supported
 
 ## Manually installing the plugin
-Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+Copy over `main.js`, `styles.css`, `manifest.json` to your vault `*VaultFolder*/.obsidian/plugins/curius-obsidian/`.
 
 ## Bugs
 If you see any bugs, please reach out to me at [https://twitter.com/krishrshah](https://twitter.com/krishrshah) and I will help you out.
