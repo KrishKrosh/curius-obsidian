@@ -55,7 +55,7 @@ export default class CuriusPlugin extends Plugin {
 		this.addCommand({
 			id: "curius-sync",
 			name: "Sync With Curius",
-			editorCallback: async () => {
+			callback: async () => {
 				new Notice("Syncing with Curius...");
 				await curiusToMarkdown(
 					parseInt(this.settings.CuriusId),

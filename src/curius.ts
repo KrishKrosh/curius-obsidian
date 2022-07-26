@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { App } from "obsidian";
+import { App, Notice } from "obsidian";
 import { getVaultPath } from "./util";
 
 // ex https://curius.app/api/users/1557/links?page=0
@@ -12,19 +12,17 @@ async function fetchCuriusData(userId: number, pageNumber: number) {
 	try {
 		const response = await fetch(url);
 		const json = await response.json();
-		return json.userSaved;
+		return { curiusData: json.userSaved, err: null };
 	} catch (error) {
 		console.error(error);
-		return [];
+		return { curiusData: null, err: error };
 	}
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function writeMarkdownFile(curiusObject: any, app: App) {
-	let curiusTemplate = `
-## [${curiusObject["title"]}](${curiusObject["link"]})
-*${curiusObject["createdDate"]}*
-
+	let curiusTemplate = `## [${curiusObject["title"]}](${curiusObject["link"]})
+*${curiusObject["createdDate"].substring(0, 10)}*
 `;
 	for (const highlight of curiusObject["highlights"]) {
 		curiusTemplate += `- ${highlight["highlight"]}\n`;
@@ -44,7 +42,11 @@ export async function curiusToMarkdown(userId: number, app: App) {
 	let fullyUpdated = false;
 	let requestsMade = 0;
 	while (!fullyUpdated && requestsMade < 200) {
-		const curiusData = await fetchCuriusData(userId, requestsMade);
+		const { curiusData, err } = await fetchCuriusData(userId, requestsMade);
+		if (err) {
+			new Notice(`Error: ${err}`);
+			return;
+		}
 		if (curiusData.length === 0) {
 			fullyUpdated = true;
 		}
